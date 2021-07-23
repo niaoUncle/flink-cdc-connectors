@@ -399,6 +399,7 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
                 properties.getProperty(
                         Heartbeat.HEARTBEAT_TOPICS_PREFIX.name(),
                         Heartbeat.HEARTBEAT_TOPICS_PREFIX.defaultValueAsString());
+        //用于具体的处理数据的逻辑
         this.debeziumChangeFetcher =
                 new DebeziumChangeFetcher<>(
                         sourceContext,
@@ -411,7 +412,7 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
         this.engine =
                 DebeziumEngine.create(Connect.class)
                         .using(properties)
-                        .notifying(changeConsumer)
+                        .notifying(changeConsumer) // 数据发给上面的debeziumConsumer
                         .using(OffsetCommitPolicy.always())
                         .using(
                                 (success, message, error) -> {
@@ -440,6 +441,7 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
                 "sourceIdleTime", (Gauge<Long>) () -> debeziumChangeFetcher.getIdleTime());
 
         // start the real debezium consumer
+        //启动真正的debezium消费
         debeziumChangeFetcher.runFetchLoop();
     }
 
@@ -470,6 +472,7 @@ public class DebeziumSourceFunction<T> extends RichSourceFunction<T>
 
             // remove older checkpoints in map
             for (int i = 0; i < posInMap; i++) {
+                pendingOffsetsToCommit.remove(0);
                 pendingOffsetsToCommit.remove(0);
             }
 

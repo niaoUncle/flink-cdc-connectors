@@ -37,6 +37,7 @@ import static org.apache.flink.table.types.utils.TypeConversions.fromLogicalToDa
 /**
  * Serialization schema from Flink Table/SQL internal data structure {@link RowData} to Changelog
  * Json.
+ * 从 Flink TableSQL 内部数据结构 {@link RowData} 到 Changelog Json 的序列化模式。
  */
 public class ChangelogJsonSerializationSchema implements SerializationSchema<RowData> {
     private static final long serialVersionUID = -3999450457829887684L;

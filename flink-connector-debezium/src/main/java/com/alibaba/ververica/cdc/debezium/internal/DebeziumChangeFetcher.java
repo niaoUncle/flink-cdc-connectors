@@ -204,8 +204,9 @@ public class DebeziumChangeFetcher<T> {
             updateMessageTimestamp(record);
             fetchDelay = processTime - messageTimestamp;
 
-            if (isHeartbeatEvent(record)) {
+            if (isHeartbeatEvent(record)) {   //在snapshot阶段不做checkpoint
                 // keep offset update
+                //保持偏移更新
                 synchronized (checkpointLock) {
                     debeziumOffset.setSourcePartition(record.sourcePartition());
                     debeziumOffset.setSourceOffset(record.sourceOffset());
@@ -217,16 +218,20 @@ public class DebeziumChangeFetcher<T> {
             deserialization.deserialize(record, debeziumCollector);
 
             if (!isSnapshotRecord(record)) {
-                LOG.debug("Snapshot phase finishes.");
+                LOG.debug("Snapshot phase finishes."); // 快照结束
                 isInDbSnapshotPhase = false;
             }
 
             // emit the actual records. this also updates offset state atomically
+            // 发出实际记录。这也会自动更新偏移状态
             emitRecordsUnderCheckpointLock(
                     debeziumCollector.records, record.sourcePartition(), record.sourceOffset());
         }
     }
 
+    // 发送记录。使用检查点锁来保证
+    // 记录发送和偏移状态更新的原子性。
+    // 同步的 checkpointLock 是可重入的。在快照模式下再次同步是安全的。
     private void emitRecordsUnderCheckpointLock(
             Queue<T> records, Map<String, ?> sourcePartition, Map<String, ?> sourceOffset) {
         // Emit the records. Use the checkpoint lock to guarantee

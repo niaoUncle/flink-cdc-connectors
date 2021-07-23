@@ -24,10 +24,10 @@ import static org.apache.flink.util.Preconditions.checkNotNull;
 
 /** Debezium startup options. */
 public final class StartupOptions {
-    public final StartupMode startupMode;
-    public final String specificOffsetFile;
-    public final Integer specificOffsetPos;
-    public final Long startupTimestampMillis;
+    public final StartupMode startupMode; //启动方式
+    public final String specificOffsetFile; // 偏移文件
+    public final Integer specificOffsetPos;//偏移位置
+    public final Long startupTimestampMillis;//启动时间戳
 
     /**
      * Performs an initial snapshot on the monitored database tables upon first startup, and

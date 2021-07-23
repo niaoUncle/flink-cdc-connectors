@@ -20,17 +20,17 @@ package com.alibaba.ververica.cdc.connectors.mysql.table;
 
 /**
  * Startup modes for the MySQL CDC Consumer.
- *
+ * 启动
  * @see StartupOptions
  */
 public enum StartupMode {
-    INITIAL,
+    INITIAL, // 初始化
 
-    EARLIEST_OFFSET,
+    EARLIEST_OFFSET, // 从头开始
 
-    LATEST_OFFSET,
+    LATEST_OFFSET,// 从当前开始
 
-    SPECIFIC_OFFSETS,
+    SPECIFIC_OFFSETS,//指定offset开始
 
-    TIMESTAMP
+    TIMESTAMP //时间戳
 }
